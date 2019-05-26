@@ -3,6 +3,11 @@
 # Ignore Firebase Config
 /src/firebase/config.js
 
+# Ignore firebase function related files
+.firebaserc
+functions/
+firebase.json
+
 # dependencies
 /node_modules
 /.pnp

@@ -3,6 +3,7 @@ import useAuth from '../Auth/useAuth'
 import FirebaseContext from '../../firebase/contex'
 import LinkItem from './LinkItem'
 import { LINKS_PER_PAGE } from '../../utils/index'
+import axios from 'axios'
 
 function LinkList (props) {
   const { firebase } = React.useContext(FirebaseContext)
@@ -42,6 +43,19 @@ function LinkList (props) {
         .startAfter(cursor.created)
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot)
+    } else {
+      const offset = page * LINKS_PER_PAGE - LINKS_PER_PAGE
+      axios
+        .get(
+          `https://us-central1-hooks-news-app-2b577.cloudfunctions.net/linksPagination?offset=${offset}`
+        )
+        .then(response => {
+          const links = response.data
+          const lastLink = links[links.length - 1]
+          setLinks(links)
+          setCursor(lastLink)
+        })
+      return () => {} // we add this in order to `return unsubscribe()` in useEffect works
     }
   }
 
