@@ -4,6 +4,7 @@
 /src/firebase/config.js
 
 # Ignore firebase function related files
+.firebase
 .firebaserc
 functions/
 firebase.json

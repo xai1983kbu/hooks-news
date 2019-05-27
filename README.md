@@ -41,3 +41,16 @@ exports.linksPagination = functions.https.onRequest((request, response) => {
     })
 })
 ```
+
+
+Deployment
+$yarn run build
+$firebase init hosting
+? What do you want to use as your public directory?
+build
+? Configure as a single-page app 
+yes
+? File build/index.html already exists. Overwrite?
+No
+
+$firebase deploy

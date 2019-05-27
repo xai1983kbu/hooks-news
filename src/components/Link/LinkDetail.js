@@ -23,7 +23,7 @@ function LinkDetail (props) {
 
   function handleAddComment () {
     if (!user) {
-      props.history.push('/ligin')
+      props.history.push('/login')
     } else {
       linkRef.get().then(doc => {
         if (doc.exists) {

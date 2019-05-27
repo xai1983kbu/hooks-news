@@ -9,10 +9,12 @@ function LinkList (props) {
   const { firebase } = React.useContext(FirebaseContext)
   const [links, setLinks] = React.useState([])
   const [cursor, setCursor] = React.useState(null)
+  const [loading, setLoading] = React.useState(false)
   const isNewPage = props.location.pathname.includes('new')
   const isTopPage = props.location.pathname.includes('top')
   // for  `/new/1`  page = 1
   const page = Number(props.match.params.page)
+  const linksRef = firebase.db.collection('links')
 
   React.useEffect(
     () => {
@@ -24,21 +26,19 @@ function LinkList (props) {
 
   function getLinks () {
     const hasCursor = Boolean(cursor)
+    setLoading(true)
     if (isTopPage) {
-      return firebase.db
-        .collection('links')
+      return linksRef
         .orderBy('voteCount', 'desc')
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot)
     } else if (page === 1) {
-      return firebase.db
-        .collection('links')
+      return linksRef
         .orderBy('created', 'desc')
         .limit(LINKS_PER_PAGE)
         .onSnapshot(handleSnapshot)
     } else if (hasCursor) {
-      return firebase.db
-        .collection('links')
+      return linksRef
         .orderBy('created', 'desc')
         .startAfter(cursor.created)
         .limit(LINKS_PER_PAGE)
@@ -54,6 +54,7 @@ function LinkList (props) {
           const lastLink = links[links.length - 1]
           setLinks(links)
           setCursor(lastLink)
+          setLoading(false)
         })
       return () => {} // we add this in order to `return unsubscribe()` in useEffect works
     }
@@ -67,6 +68,7 @@ function LinkList (props) {
     // console.log({ links });
     const lastLink = links[links.length - 1]
     setCursor(lastLink)
+    setLoading(false)
   }
 
   function visitPreviousPage () {
@@ -84,7 +86,7 @@ function LinkList (props) {
   const pageIndex = page ? (page - 1) * LINKS_PER_PAGE + 1 : 0
 
   return (
-    <div>
+    <div style={{ opacity: loading ? 0.25 : 1 }}>
       {links.map((link, index) => (
         <LinkItem
           key={link.id}
